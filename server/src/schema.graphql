@@ -1,0 +1,37 @@
+scalar Void
+type User {
+  id: Int!
+  email: String!
+  login: String!
+  password: String!
+}
+type Todo {
+  id: Int!
+  title: String!
+  completed: Boolean!
+  user: User
+}
+
+input RegisterUserInput {
+  email: String!
+  login: String!
+  password: String!
+}
+
+input LoginInput {
+  login: String!
+  password: String!
+}
+
+type ReturnUserWithAccessToken {
+  user: User!
+  accessToken: String!
+}
+
+type Query {
+  getUserData: User
+}
+type Mutation {
+  register(user: RegisterUserInput!): ReturnUserWithAccessToken
+  login(data: LoginInput!): ReturnUserWithAccessToken
+}

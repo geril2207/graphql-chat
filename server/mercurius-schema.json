@@ -1,0 +1,3 @@
+[
+  "scalar Void\n\ntype User {\n  id: Int!\n  email: String!\n  login: String!\n  password: String!\n}\n\ntype Todo {\n  id: Int!\n  title: String!\n  completed: Boolean!\n  user: User\n}\n\ninput RegisterUserInput {\n  email: String!\n  login: String!\n  password: String!\n}\n\ninput LoginInput {\n  login: String!\n  password: String!\n}\n\ntype ReturnUserWithAccessToken {\n  user: User!\n  accessToken: String!\n}\n\ntype Query {\n  getUserData: User\n}\n\ntype Mutation {\n  register(user: RegisterUserInput!): ReturnUserWithAccessToken\n  login(data: LoginInput!): ReturnUserWithAccessToken\n}"
+]
