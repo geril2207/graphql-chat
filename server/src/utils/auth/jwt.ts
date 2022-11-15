@@ -1,7 +1,12 @@
 import { User } from '@prisma/client'
-import { sign, verify } from 'jsonwebtoken'
+import { JwtPayload, sign, verify } from 'jsonwebtoken'
 import mercurius from 'mercurius'
 const { ErrorWithProps } = mercurius
+
+export interface AuthJwtPayload extends JwtPayload {
+  id: number
+  login: string
+}
 
 export const ACCESS_PRIVATE_KEY = 'access'
 export const REFRESH_PRIVATE_KEY = 'refresh'
@@ -16,7 +21,7 @@ export const generateTokens = (user: User) => {
     login: user.login,
   }
   const accessToken = sign(userData, ACCESS_PRIVATE_KEY, {
-    expiresIn: '15m',
+    expiresIn: '30d',
   })
 
   const refreshToken = sign(userData, REFRESH_PRIVATE_KEY, {
@@ -25,17 +30,17 @@ export const generateTokens = (user: User) => {
   return { accessToken, refreshToken }
 }
 
-export const getTokenPayload = async (
-  token: string,
-  type: 'access' | 'refresh'
-) => {
+export const getTokenPayload = (token: string, type: 'access' | 'refresh') => {
   try {
     const secretTypeKey =
       type === 'access' ? ACCESS_PRIVATE_KEY : REFRESH_PRIVATE_KEY
     const parsedToken = parseBearerToken(token)
-    const payload = verify(parsedToken, secretTypeKey)
+    const payload = verify(parsedToken, secretTypeKey) as AuthJwtPayload
     return payload
   } catch (error) {
+    console.log('error :>> ', error)
     throw new ErrorWithProps('Пользователь не авторизован', {}, 403)
   }
 }
+
+export const checkAuth = (token: string) => getTokenPayload(token, 'access')

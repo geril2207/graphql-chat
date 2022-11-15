@@ -16,6 +16,7 @@ specifiers:
   autoprefixer: ^10.4.12
   framer-motion: ^7.6.1
   graphql: ^16.6.0
+  graphql-ws: ^5.11.2
   path: ^0.12.7
   postcss: ^8.4.17
   react: ^18.2.0
@@ -28,12 +29,13 @@ specifiers:
   vite: ^3.1.0
 
 dependencies:
-  '@apollo/client': 3.7.0_gdcq4dv6opitr3wbfwyjmanyra
+  '@apollo/client': 3.7.0_xe4twbeoqswbn2uas4ov5melbq
   '@chakra-ui/react': 2.3.6_4a5gkdj7phvhqinmegnu2kpw7m
   '@emotion/react': 11.10.4_iapumuv4e6jcjznwuxpf4tt22e
   '@emotion/styled': 11.10.4_g3tud4ene45llglqap74b5kkse
   framer-motion: 7.6.1_biqbaboplfbrettd7655fr4n2y
   graphql: 16.6.0
+  graphql-ws: 5.11.2_graphql@16.6.0
   path: 0.12.7
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
@@ -66,7 +68,7 @@ packages:
       '@jridgewell/trace-mapping': 0.3.16
     dev: true
 
-  /@apollo/client/3.7.0_gdcq4dv6opitr3wbfwyjmanyra:
+  /@apollo/client/3.7.0_xe4twbeoqswbn2uas4ov5melbq:
     resolution: {integrity: sha512-hp4OvrH1ZIQACRYcIrh/C0WFnY7IM7G6nlTpC8DSTEWxfZQ2kvpvDY0I/hYmCs0oAVrg26g3ANEdOzGWTcYbPg==}
     peerDependencies:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
@@ -90,6 +92,7 @@ packages:
       '@wry/trie': 0.3.2
       graphql: 16.6.0
       graphql-tag: 2.12.6_graphql@16.6.0
+      graphql-ws: 5.11.2_graphql@16.6.0
       hoist-non-react-statics: 3.3.2
       optimism: 0.16.1
       prop-types: 15.8.1
@@ -3895,7 +3898,6 @@ packages:
       graphql: '>=0.11 <=16'
     dependencies:
       graphql: 16.6.0
-    dev: true
 
   /graphql/16.6.0:
     resolution: {integrity: sha512-KPIBPDlW7NxrbT/eh4qPXz5FiFdL5UbaA0XUNz2Rp3Z3hqBSkbj0GVjwFDztsWVauZUWsbKHgMg++sk8UX0bkw==}

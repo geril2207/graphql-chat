@@ -1,17 +1,17 @@
 import { FC } from 'react'
 import Login from '../pages/Login/Login'
-import Redirect from '../components/Redirect/Redirect'
 import Home from '../pages/Home/Home'
+import MainLayout from '../components/Layout/MainLayout/MainLayout'
 
-interface Route {
+export interface Route {
   id: string
   path: string
-  element: FC
+  element: FC<any>
+  layout?: FC<any>
 }
 
-export const publicRoutes: Route[] = [
-  { id: 'LOGIN', path: '/login', element: Login },
-  { id: 'REDIRECT', path: '*', element: Redirect },
-]
+export const publicRoutes: Route[] = [{ id: 'LOGIN', path: '/login', element: Login }]
 
-export const privateRoutes: Route[] = [{ id: 'HOME', path: '/home', element: Home }]
+export const privateRoutes: Route[] = [
+  { id: 'HOME', path: '/home', element: Home, layout: MainLayout },
+]

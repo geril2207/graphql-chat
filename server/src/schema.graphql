@@ -1,15 +1,43 @@
 scalar Void
+
+enum ChatType {
+  group
+  private
+}
+
 type User {
   id: Int!
   email: String!
   login: String!
   password: String!
 }
-type Todo {
+
+type Chat {
   id: Int!
-  title: String!
-  completed: Boolean!
-  user: User
+  title: String
+  type: ChatType!
+  userCreated: User
+  userCreatedId: Int!
+}
+
+type Message {
+  sender: User!
+  message: String!
+  chat: Chat
+  senderId: Int!
+  chatId: Int!
+  createdAt: String!
+}
+
+type ReturnUserWithAccessToken {
+  user: User!
+  accessToken: String!
+}
+
+type ChatInfo {
+  chat: Chat!
+  type: Int!
+  messages: [Message]!
 }
 
 input RegisterUserInput {
@@ -23,15 +51,24 @@ input LoginInput {
   password: String!
 }
 
-type ReturnUserWithAccessToken {
-  user: User!
-  accessToken: String!
+input SendMessageInput {
+  chatId: Int
+  receiverId: Int
+  message: String!
 }
 
 type Query {
   getUserData: User
+  getChatsByUser: [Chat]
+  getChatHistory: ChatInfo
 }
+
 type Mutation {
   register(user: RegisterUserInput!): ReturnUserWithAccessToken
   login(data: LoginInput!): ReturnUserWithAccessToken
+  sendMessage(message: SendMessageInput!): Message
+}
+
+type Subscription {
+  messageAdded: Message
 }

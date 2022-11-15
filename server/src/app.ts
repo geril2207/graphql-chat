@@ -7,6 +7,7 @@ import AltairFastify from 'altair-fastify-plugin'
 import { resolvers } from './resolvers'
 import fastifyCookie from '@fastify/cookie'
 import fastifyCors from '@fastify/cors'
+import { loaders } from './loaders'
 
 const app = fastify()
 
@@ -20,11 +21,14 @@ app.register(mercurius, {
   graphiql: false,
   context: buildContext,
   path: '/',
+  subscription: true,
+  cache: false,
+  loaders,
 })
 app.register(AltairFastify, {
   path: '/altair',
   baseURL: '/altair/',
-  endpointURL: '/graphql',
+  endpointURL: '/',
 })
 
 app.register(fastifyCors, {

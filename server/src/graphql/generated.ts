@@ -38,6 +38,11 @@ export type Scalars = {
   _FieldSet: any
 }
 
+export enum ChatType {
+  group = 'group',
+  private = 'private',
+}
+
 export type User = {
   __typename?: 'User'
   id: Scalars['Int']
@@ -46,12 +51,36 @@ export type User = {
   password: Scalars['String']
 }
 
-export type Todo = {
-  __typename?: 'Todo'
+export type Chat = {
+  __typename?: 'Chat'
   id: Scalars['Int']
-  title: Scalars['String']
-  completed: Scalars['Boolean']
-  user?: Maybe<User>
+  title?: Maybe<Scalars['String']>
+  type: ChatType
+  userCreated?: Maybe<User>
+  userCreatedId: Scalars['Int']
+}
+
+export type Message = {
+  __typename?: 'Message'
+  sender: User
+  message: Scalars['String']
+  chat?: Maybe<Chat>
+  senderId: Scalars['Int']
+  chatId: Scalars['Int']
+  createdAt: Scalars['String']
+}
+
+export type ReturnUserWithAccessToken = {
+  __typename?: 'ReturnUserWithAccessToken'
+  user: User
+  accessToken: Scalars['String']
+}
+
+export type ChatInfo = {
+  __typename?: 'ChatInfo'
+  chat: Chat
+  type: Scalars['Int']
+  messages: Array<Maybe<Message>>
 }
 
 export type RegisterUserInput = {
@@ -65,21 +94,24 @@ export type LoginInput = {
   password: Scalars['String']
 }
 
-export type ReturnUserWithAccessToken = {
-  __typename?: 'ReturnUserWithAccessToken'
-  user: User
-  accessToken: Scalars['String']
+export type SendMessageInput = {
+  chatId?: InputMaybe<Scalars['Int']>
+  receiverId?: InputMaybe<Scalars['Int']>
+  message: Scalars['String']
 }
 
 export type Query = {
   __typename?: 'Query'
   getUserData?: Maybe<User>
+  getChatsByUser?: Maybe<Array<Maybe<Chat>>>
+  getChatHistory?: Maybe<ChatInfo>
 }
 
 export type Mutation = {
   __typename?: 'Mutation'
   register?: Maybe<ReturnUserWithAccessToken>
   login?: Maybe<ReturnUserWithAccessToken>
+  sendMessage?: Maybe<Message>
 }
 
 export type MutationregisterArgs = {
@@ -88,6 +120,15 @@ export type MutationregisterArgs = {
 
 export type MutationloginArgs = {
   data: LoginInput
+}
+
+export type MutationsendMessageArgs = {
+  message: SendMessageInput
+}
+
+export type Subscription = {
+  __typename?: 'Subscription'
+  messageAdded?: Maybe<Message>
 }
 
 export type ResolverTypeWrapper<T> = Promise<T> | T
@@ -191,16 +232,21 @@ export type DirectiveResolverFn<
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Void: ResolverTypeWrapper<Scalars['Void']>
+  ChatType: ChatType
   User: ResolverTypeWrapper<User>
   Int: ResolverTypeWrapper<Scalars['Int']>
   String: ResolverTypeWrapper<Scalars['String']>
-  Todo: ResolverTypeWrapper<Todo>
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>
+  Chat: ResolverTypeWrapper<Chat>
+  Message: ResolverTypeWrapper<Message>
+  ReturnUserWithAccessToken: ResolverTypeWrapper<ReturnUserWithAccessToken>
+  ChatInfo: ResolverTypeWrapper<ChatInfo>
   RegisterUserInput: RegisterUserInput
   LoginInput: LoginInput
-  ReturnUserWithAccessToken: ResolverTypeWrapper<ReturnUserWithAccessToken>
+  SendMessageInput: SendMessageInput
   Query: ResolverTypeWrapper<{}>
   Mutation: ResolverTypeWrapper<{}>
+  Subscription: ResolverTypeWrapper<{}>
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>
 }
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -209,13 +255,17 @@ export type ResolversParentTypes = {
   User: User
   Int: Scalars['Int']
   String: Scalars['String']
-  Todo: Todo
-  Boolean: Scalars['Boolean']
+  Chat: Chat
+  Message: Message
+  ReturnUserWithAccessToken: ReturnUserWithAccessToken
+  ChatInfo: ChatInfo
   RegisterUserInput: RegisterUserInput
   LoginInput: LoginInput
-  ReturnUserWithAccessToken: ReturnUserWithAccessToken
+  SendMessageInput: SendMessageInput
   Query: {}
   Mutation: {}
+  Subscription: {}
+  Boolean: Scalars['Boolean']
 }
 
 export interface VoidScalarConfig
@@ -234,14 +284,28 @@ export type UserResolvers<
   isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }
 
-export type TodoResolvers<
+export type ChatResolvers<
   ContextType = MercuriusContext,
-  ParentType extends ResolversParentTypes['Todo'] = ResolversParentTypes['Todo']
+  ParentType extends ResolversParentTypes['Chat'] = ResolversParentTypes['Chat']
 > = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  completed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>
-  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  type?: Resolver<ResolversTypes['ChatType'], ParentType, ContextType>
+  userCreated?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>
+  userCreatedId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
+export type MessageResolvers<
+  ContextType = MercuriusContext,
+  ParentType extends ResolversParentTypes['Message'] = ResolversParentTypes['Message']
+> = {
+  sender?: Resolver<ResolversTypes['User'], ParentType, ContextType>
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  chat?: Resolver<Maybe<ResolversTypes['Chat']>, ParentType, ContextType>
+  senderId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  chatId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }
 
@@ -254,11 +318,35 @@ export type ReturnUserWithAccessTokenResolvers<
   isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
 }
 
+export type ChatInfoResolvers<
+  ContextType = MercuriusContext,
+  ParentType extends ResolversParentTypes['ChatInfo'] = ResolversParentTypes['ChatInfo']
+> = {
+  chat?: Resolver<ResolversTypes['Chat'], ParentType, ContextType>
+  type?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  messages?: Resolver<
+    Array<Maybe<ResolversTypes['Message']>>,
+    ParentType,
+    ContextType
+  >
+  isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>
+}
+
 export type QueryResolvers<
   ContextType = MercuriusContext,
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
 > = {
   getUserData?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>
+  getChatsByUser?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['Chat']>>>,
+    ParentType,
+    ContextType
+  >
+  getChatHistory?: Resolver<
+    Maybe<ResolversTypes['ChatInfo']>,
+    ParentType,
+    ContextType
+  >
 }
 
 export type MutationResolvers<
@@ -277,15 +365,36 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationloginArgs, 'data'>
   >
+  sendMessage?: Resolver<
+    Maybe<ResolversTypes['Message']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationsendMessageArgs, 'message'>
+  >
+}
+
+export type SubscriptionResolvers<
+  ContextType = MercuriusContext,
+  ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']
+> = {
+  messageAdded?: SubscriptionResolver<
+    Maybe<ResolversTypes['Message']>,
+    'messageAdded',
+    ParentType,
+    ContextType
+  >
 }
 
 export type Resolvers<ContextType = MercuriusContext> = {
   Void?: GraphQLScalarType
   User?: UserResolvers<ContextType>
-  Todo?: TodoResolvers<ContextType>
+  Chat?: ChatResolvers<ContextType>
+  Message?: MessageResolvers<ContextType>
   ReturnUserWithAccessToken?: ReturnUserWithAccessTokenResolvers<ContextType>
+  ChatInfo?: ChatInfoResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
+  Subscription?: SubscriptionResolvers<ContextType>
 }
 
 export type Loader<TReturn, TObj, TParams, TContext> = (
@@ -317,11 +426,21 @@ export interface Loaders<
     password?: LoaderResolver<Scalars['String'], User, {}, TContext>
   }
 
-  Todo?: {
-    id?: LoaderResolver<Scalars['Int'], Todo, {}, TContext>
-    title?: LoaderResolver<Scalars['String'], Todo, {}, TContext>
-    completed?: LoaderResolver<Scalars['Boolean'], Todo, {}, TContext>
-    user?: LoaderResolver<Maybe<User>, Todo, {}, TContext>
+  Chat?: {
+    id?: LoaderResolver<Scalars['Int'], Chat, {}, TContext>
+    title?: LoaderResolver<Maybe<Scalars['String']>, Chat, {}, TContext>
+    type?: LoaderResolver<ChatType, Chat, {}, TContext>
+    userCreated?: LoaderResolver<Maybe<User>, Chat, {}, TContext>
+    userCreatedId?: LoaderResolver<Scalars['Int'], Chat, {}, TContext>
+  }
+
+  Message?: {
+    sender?: LoaderResolver<User, Message, {}, TContext>
+    message?: LoaderResolver<Scalars['String'], Message, {}, TContext>
+    chat?: LoaderResolver<Maybe<Chat>, Message, {}, TContext>
+    senderId?: LoaderResolver<Scalars['Int'], Message, {}, TContext>
+    chatId?: LoaderResolver<Scalars['Int'], Message, {}, TContext>
+    createdAt?: LoaderResolver<Scalars['String'], Message, {}, TContext>
   }
 
   ReturnUserWithAccessToken?: {
@@ -332,6 +451,12 @@ export interface Loaders<
       {},
       TContext
     >
+  }
+
+  ChatInfo?: {
+    chat?: LoaderResolver<Chat, ChatInfo, {}, TContext>
+    type?: LoaderResolver<Scalars['Int'], ChatInfo, {}, TContext>
+    messages?: LoaderResolver<Array<Maybe<Message>>, ChatInfo, {}, TContext>
   }
 }
 declare module 'mercurius' {

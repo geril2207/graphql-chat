@@ -16,6 +16,7 @@
     "@emotion/styled": "^11.10.4",
     "framer-motion": "^7.6.1",
     "graphql": "^16.6.0",
+    "graphql-ws": "^5.11.2",
     "path": "^0.12.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
