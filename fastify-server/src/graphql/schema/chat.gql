@@ -1,0 +1,16 @@
+enum ChatType {
+  group
+  private
+}
+
+type Chat {
+  id: Int!
+  title: String
+  type: ChatType!
+  userCreated: User
+}
+
+type ChatInfo {
+  chat: Chat!
+  messages: [Message]!
+}

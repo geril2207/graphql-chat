@@ -1,0 +1,32 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Hello {
+  hello: String!
+}
+
+input LoginMutationInput {
+  login: String!
+  password: String!
+}
+
+type Mutation {
+  login(data: LoginMutationInput!): ReturnUserWithAccessToken!
+}
+
+type Query {
+  getHello: Hello!
+}
+
+type ReturnUserWithAccessToken {
+  accessToken: String!
+  user: User!
+}
+
+type User {
+  email: String!
+  id: Int!
+  login: String!
+  password: String!
+}

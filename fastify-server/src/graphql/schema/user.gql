@@ -1,0 +1,26 @@
+type User {
+  id: Int!
+  email: String!
+  login: String!
+  password: String!
+}
+
+type ReturnUserWithAccessToken {
+  user: User!
+  accessToken: String!
+}
+
+input RegisterUserInput {
+  email: String!
+  login: String!
+  password: String!
+}
+
+input LoginInput {
+  login: String!
+  password: String!
+}
+
+type RefreshTokenMutation {
+  accessToken: String!
+}

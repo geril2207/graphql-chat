@@ -1,0 +1,6 @@
+type Mutation {
+  sendMessage(message: SendMessageInput!): Message
+  register(user: RegisterUserInput!): ReturnUserWithAccessToken
+  login(data: LoginInput!): ReturnUserWithAccessToken
+  refresh: RefreshTokenMutation!
+}

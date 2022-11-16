@@ -1,4 +1,4 @@
-import { accessTokenVar } from '../../apollo'
+import { accessTokenVar } from '../../apollo/client'
 
 const ACCESS_TOKEN_NAME = 'GQL_ACC_TOKEN'
 

@@ -1,7 +1,7 @@
 import { useReactiveVar } from '@apollo/client'
 import React from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { accessTokenVar } from '../apollo'
+import { accessTokenVar } from '../apollo/client'
 import Redirect from '../components/Redirect/Redirect'
 import { privateRoutes, publicRoutes, Route as IRoute } from './routes'
 

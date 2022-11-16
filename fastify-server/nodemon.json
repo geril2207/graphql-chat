@@ -1,0 +1,4 @@
+{
+  "ext": "gql,graphql,ts,js",
+  "ignore": ["src/generated/generated.ts", "mercurius-schema.json"]
+}
