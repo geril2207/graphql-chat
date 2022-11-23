@@ -1,4 +1,4 @@
-import { ApolloClient, FetchResult, HttpLink, split } from '@apollo/client'
+import { ApolloClient, HttpLink, split } from '@apollo/client'
 import { onError } from '@apollo/client/link/error'
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions'
 import { cache } from './cache'
@@ -6,12 +6,12 @@ import { accessTokenVar } from './vars/accessToken'
 import { createClient } from 'graphql-ws'
 import { getMainDefinition } from '@apollo/client/utilities'
 import generateAuthHeader from '../utils/auth/generateHeader'
-import { RefreshAuthDocument, RefreshAuthMutationResult } from '../../generated/graphql'
+import { RefreshAuthDocument } from '../../generated/graphql'
 import { setAccessToken } from '../helpers/LocalStorage/AccessToken'
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: 'ws://localhost:4000',
+    url: 'ws://localhost:4000/graphql',
     connectionParams: {
       authorization: generateAuthHeader(accessTokenVar()),
     },
@@ -23,7 +23,7 @@ const httpLink = new HttpLink({
   headers: {
     authorization: generateAuthHeader(accessTokenVar()),
   },
-  credentials: 'include',
+  // credentials: 'include',
 })
 
 export const client = new ApolloClient({
@@ -38,20 +38,20 @@ const errorLink = onError(({ graphQLErrors, networkError, forward, operation }) 
       console.log(
         `[GraphQL error]: Message: ${error.message}, Location: ${error.locations}, Path: ${error.path}`
       )
-      if (error.path && !error.path.includes('refresh')) {
-        const res = await client.mutate({
-          mutation: RefreshAuthDocument,
-        })
-        const accesToken = res.data?.refresh ?? null
-        setAccessToken(res.data?.refresh ?? null)
-        console.log('res :>> ', res)
-        operation.setContext({
-          headers: {
-            authorization: accesToken,
-          },
-        })
-        return forward(operation)
-      }
+      // if (!error.path.includes('refresh')) {
+      //   const res = await client.mutate({
+      //     mutation: RefreshAuthDocument,
+      //   })
+      //   const accesToken = res.data?.refresh ?? null
+      //   setAccessToken(res.data?.refresh ?? null)
+      //   console.log('res :>> ', res)
+      //   operation.setContext({
+      //     headers: {
+      //       authorization: accesToken,
+      //     },
+      //   })
+      //   return forward(operation)
+      // }
     })
   if (networkError) console.log(`[Network error]: ${networkError}`)
 })

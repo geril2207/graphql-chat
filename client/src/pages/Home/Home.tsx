@@ -1,12 +1,15 @@
 import { Box } from '@chakra-ui/react'
 import React from 'react'
+import { useGetUserDataQuery } from '../../../generated/graphql'
 import ChatList from './ChatList/ChatList'
+import ChatView from './ChatView/ChatView'
 
 const Home = () => {
+  const { data } = useGetUserDataQuery()
   return (
-    <Box className="flex">
+    <Box className="flex flex-grow h-max">
       <ChatList />
-      <Box className="flex-grow px-4">123</Box>
+      <ChatView />
     </Box>
   )
 }

@@ -2,8 +2,24 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Hello {
-  hello: String!
+type Chat {
+  chatParticipants(withUser: Boolean = true): [User!]!
+  id: Int!
+  messages(sort: GetMessagesSort): [Message!]!
+  title: String
+  type: ChatType!
+  userCreated: User!
+}
+
+enum ChatType {
+  group
+  private
+}
+
+input GetMessagesSort {
+  orderBy: SortEnum = asc
+  skip: Int = 0
+  take: Int = 20
 }
 
 input LoginMutationInput {
@@ -11,12 +27,31 @@ input LoginMutationInput {
   password: String!
 }
 
+type Message {
+  chat: Chat!
+  chatId: Int!
+  createdAt: String!
+  id: Int!
+  message: String!
+  sender: User!
+  senderId: Int!
+}
+
 type Mutation {
   login(data: LoginMutationInput!): ReturnUserWithAccessToken!
+  refresh: ReturnAccessToken!
+  sendMessage(data: SendMessageInput!): Message!
 }
 
 type Query {
-  getHello: Hello!
+  getMessage(id: Float!): Message!
+  getMessages(chatId: Float!, sort: GetMessagesSort): [Message!]!
+  getUserChats: [Chat!]!
+  getUserData: User!
+}
+
+type ReturnAccessToken {
+  accessToken: String!
 }
 
 type ReturnUserWithAccessToken {
@@ -24,9 +59,18 @@ type ReturnUserWithAccessToken {
   user: User!
 }
 
+input SendMessageInput {
+  chatId: Int!
+  message: String!
+}
+
+enum SortEnum {
+  asc
+  desc
+}
+
 type User {
   email: String!
   id: Int!
   login: String!
-  password: String!
 }

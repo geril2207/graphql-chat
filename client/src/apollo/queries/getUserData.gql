@@ -3,5 +3,6 @@ query getUserData {
     id
     email
     login
+
   }
 }

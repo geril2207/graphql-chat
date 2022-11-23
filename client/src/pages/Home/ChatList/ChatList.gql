@@ -1,5 +1,17 @@
-subscription MessageSendedSubscribe {
-  messageAdded {
-    message
+query getUserChats {
+  getUserChats {
+    id
+    title
+    type
+    messages(sort: { orderBy: desc, take: 1 }) {
+      message
+      senderId
+      sender {
+        login
+      }
+    }
+    chatParticipants(withUser: false) {
+      login
+    }
   }
 }

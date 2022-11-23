@@ -1,9 +1,9 @@
-mutation sendMessage($message: SendMessageInput!) {
-  sendMessage(message: $message) {
-    sender {
-      id
-      login
-    }
-    message
-  }
-}
+# mutation sendMessage($message: SendMessageInput!) {
+#   sendMessage(message: $message) {
+#     sender {
+#       id
+#       login
+#     }
+#     message
+#   }
+# }

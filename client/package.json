@@ -22,7 +22,8 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.38.0",
     "react-router-dom": "^6.4.2",
-    "sass": "^1.55.0"
+    "sass": "^1.55.0",
+    "zustand": "^4.1.4"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "2.13.6",

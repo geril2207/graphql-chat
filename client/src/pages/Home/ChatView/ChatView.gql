@@ -1,0 +1,9 @@
+query GetMessagesByChat($chatId: Float!) {
+  getMessages(chatId: $chatId, sort: { orderBy: desc }) {
+    message
+    sender {
+      login
+    }
+    id
+  }
+}

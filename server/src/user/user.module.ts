@@ -1,10 +1,7 @@
 import { Module } from '@nestjs/common'
-import { JwtService } from '@nestjs/jwt'
-import { PassportModule } from '@nestjs/passport'
-import { AuthResolver } from './resolvers/auth.resolver'
+import { UserResolver } from './resolvers/user.resolver'
 
 @Module({
-  imports: [PassportModule],
-  providers: [AuthResolver, JwtService],
+  providers: [UserResolver],
 })
 export class UserModule {}

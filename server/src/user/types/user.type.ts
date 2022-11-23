@@ -9,9 +9,5 @@ export class User {
   email: string
 
   @Field()
-  password: string
-
-  @Field()
   login: string
 }
-
