@@ -1,22 +1,24 @@
-import { Box, Input } from '@chakra-ui/react'
-import React from 'react'
-import { useGetUserChatsQuery, useGetUserDataQuery } from '../../../../generated/graphql'
-import { useSelectedChat } from '../../../store/useSelectedChat'
-// import { useMessageSendedSubscribeSubscription } from '../../../../generated/graphql'
-import ChatListItem from './ChatListItem/ChatListItem'
+import { Box, Input } from "@chakra-ui/react"
+import React from "react"
+import {
+  useGetUserChatsQuery,
+  useGetUserDataQuery,
+} from "../../../../generated/graphql"
+import { useSelectedChat } from "../../../store/useSelectedChat"
+import ChatListItem from "./ChatListItem/ChatListItem"
 
 const ChatList = () => {
   const { data: userData } = useGetUserDataQuery()
   const { data } = useGetUserChatsQuery()
-  const { setSelectedChatId } = useSelectedChat()
-  // useMessageSendedSubscribeSubscription()
+  const { setSelectedChatId, selectedChatId } = useSelectedChat()
   return (
-    <Box className="w-2/6 border-r px-4">
+    <Box className="w-3/12 border-r px-4">
       <Input placeholder="Поиск" />
       <Box>
         {data &&
-          data.getUserChats.map((item) => (
+          data.getUserChats.map(item => (
             <ChatListItem
+              selectedChatId={selectedChatId}
               userData={userData}
               item={item}
               key={item.id}

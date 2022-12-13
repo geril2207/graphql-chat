@@ -6,6 +6,7 @@ import ChatView from './ChatView/ChatView'
 
 const Home = () => {
   const { data } = useGetUserDataQuery()
+  const a = 1
   return (
     <Box className="flex flex-grow h-max">
       <ChatList />

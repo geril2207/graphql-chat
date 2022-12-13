@@ -1,28 +1,34 @@
 import { ApolloClient, HttpLink, split } from '@apollo/client'
 import { onError } from '@apollo/client/link/error'
+import { setContext } from '@apollo/client/link/context'
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions'
 import { cache } from './cache'
 import { accessTokenVar } from './vars/accessToken'
 import { createClient } from 'graphql-ws'
 import { getMainDefinition } from '@apollo/client/utilities'
 import generateAuthHeader from '../utils/auth/generateHeader'
-import { RefreshAuthDocument } from '../../generated/graphql'
-import { setAccessToken } from '../helpers/LocalStorage/AccessToken'
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: 'ws://localhost:4000/graphql',
+    url: 'ws://localhost:4000',
     connectionParams: {
       authorization: generateAuthHeader(accessTokenVar()),
     },
   })
 )
 
+const authLink = setContext((_, { headers }) => {
+  const token = generateAuthHeader(accessTokenVar())
+  return {
+    headers: {
+      ...headers,
+      authorization: token,
+    },
+  }
+})
+
 const httpLink = new HttpLink({
   uri: 'http://localhost:4000',
-  headers: {
-    authorization: generateAuthHeader(accessTokenVar()),
-  },
   // credentials: 'include',
 })
 
@@ -65,5 +71,5 @@ const splitLink = split(
   httpLink
 )
 
-client.setLink(errorLink.concat(splitLink))
+client.setLink(errorLink.concat(authLink.concat(splitLink)))
 export { accessTokenVar }

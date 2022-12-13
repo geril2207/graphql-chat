@@ -119,6 +119,11 @@ export enum SortEnum {
   Desc = 'desc'
 }
 
+export type Subscription = {
+  __typename?: 'Subscription';
+  messageAddedSub: Message;
+};
+
 export type User = {
   __typename?: 'User';
   email: Scalars['String'];
@@ -141,19 +146,26 @@ export type GetUserChatsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetUserChatsQuery = { __typename?: 'Query', getUserChats: Array<{ __typename?: 'Chat', id: number, title?: string | null, type: ChatType, messages: Array<{ __typename?: 'Message', message: string, senderId: number, sender: { __typename?: 'User', login: string } }>, chatParticipants: Array<{ __typename?: 'User', login: string }> }> };
 
+export type SubscribeToMessageSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SubscribeToMessageSubscription = { __typename?: 'Subscription', messageAddedSub: { __typename?: 'Message', senderId: number, message: string, chatId: number } };
+
 export type GetMessagesByChatQueryVariables = Exact<{
   chatId: Scalars['Float'];
 }>;
 
 
-export type GetMessagesByChatQuery = { __typename?: 'Query', getMessages: Array<{ __typename?: 'Message', message: string, id: number, sender: { __typename?: 'User', login: string } }> };
+export type GetMessagesByChatQuery = { __typename?: 'Query', getMessages: Array<{ __typename?: 'Message', message: string, id: number, createdAt: string, sender: { __typename?: 'User', login: string } }> };
 
 export type SendMessageMutationVariables = Exact<{
   data: SendMessageInput;
 }>;
 
 
-export type SendMessageMutation = { __typename?: 'Mutation', sendMessage: { __typename?: 'Message', chatId: number, id: number, message: string } };
+export type SendMessageMutation = { __typename?: 'Mutation', sendMessage: { __typename?: 'Message', id: number, message: string } };
+
+export type NewMessageFragment = { __typename?: 'Message', id: number, message: string };
 
 export type LoginMutationVariables = Exact<{
   data: LoginMutationInput;
@@ -162,7 +174,12 @@ export type LoginMutationVariables = Exact<{
 
 export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'ReturnUserWithAccessToken', accessToken: string, user: { __typename?: 'User', id: number, email: string, login: string } } };
 
-
+export const NewMessageFragmentDoc = gql`
+    fragment NewMessage on Message {
+  id
+  message
+}
+    `;
 export const RefreshAuthDocument = gql`
     mutation refreshAuth {
   refresh {
@@ -277,14 +294,46 @@ export function useGetUserChatsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type GetUserChatsQueryHookResult = ReturnType<typeof useGetUserChatsQuery>;
 export type GetUserChatsLazyQueryHookResult = ReturnType<typeof useGetUserChatsLazyQuery>;
 export type GetUserChatsQueryResult = Apollo.QueryResult<GetUserChatsQuery, GetUserChatsQueryVariables>;
+export const SubscribeToMessageDocument = gql`
+    subscription subscribeToMessage {
+  messageAddedSub {
+    senderId
+    message
+    chatId
+  }
+}
+    `;
+
+/**
+ * __useSubscribeToMessageSubscription__
+ *
+ * To run a query within a React component, call `useSubscribeToMessageSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useSubscribeToMessageSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubscribeToMessageSubscription({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSubscribeToMessageSubscription(baseOptions?: Apollo.SubscriptionHookOptions<SubscribeToMessageSubscription, SubscribeToMessageSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<SubscribeToMessageSubscription, SubscribeToMessageSubscriptionVariables>(SubscribeToMessageDocument, options);
+      }
+export type SubscribeToMessageSubscriptionHookResult = ReturnType<typeof useSubscribeToMessageSubscription>;
+export type SubscribeToMessageSubscriptionResult = Apollo.SubscriptionResult<SubscribeToMessageSubscription>;
 export const GetMessagesByChatDocument = gql`
     query GetMessagesByChat($chatId: Float!) {
-  getMessages(chatId: $chatId, sort: {orderBy: desc}) {
+  getMessages(chatId: $chatId, sort: {orderBy: desc, take: 100}) {
     message
     sender {
       login
     }
     id
+    createdAt
   }
 }
     `;
@@ -319,7 +368,6 @@ export type GetMessagesByChatQueryResult = Apollo.QueryResult<GetMessagesByChatQ
 export const SendMessageDocument = gql`
     mutation sendMessage($data: SendMessageInput!) {
   sendMessage(data: $data) {
-    chatId
     id
     message
   }

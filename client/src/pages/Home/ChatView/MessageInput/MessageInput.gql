@@ -1,6 +1,5 @@
 mutation sendMessage($data: SendMessageInput!) {
   sendMessage(data: $data) {
-    chatId
     id
     message
   }

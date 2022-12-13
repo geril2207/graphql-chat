@@ -1,5 +1,5 @@
-import create from 'zustand'
-import { devtools } from 'zustand/middleware'
+import create from "zustand"
+import { devtools } from "zustand/middleware"
 
 interface SelectedChat {
   selectedChatId: number | null
@@ -7,8 +7,9 @@ interface SelectedChat {
 }
 
 export const useSelectedChat = create<SelectedChat>()(
-  devtools((set) => ({
+  devtools(set => ({
     selectedChatId: null,
-    setSelectedChatId: (id: number) => set((prev) => ({ ...prev, selectedChatId: id })),
+    setSelectedChatId: (id: number) =>
+      set(prev => ({ ...prev, selectedChatId: id })),
   }))
 )

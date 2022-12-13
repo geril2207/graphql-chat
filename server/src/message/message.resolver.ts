@@ -6,6 +6,7 @@ import {
   Query,
   ResolveField,
   Resolver,
+  Subscription,
 } from '@nestjs/graphql'
 import { PubSub } from 'graphql-subscriptions'
 import { JwtAuthData } from 'src/auth/auth.types'
@@ -13,7 +14,12 @@ import { DataLoaders } from 'src/loader/dataloader.service'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { User } from 'src/user/types/user.type'
 import { AuthUser } from 'src/utils/decorators/user.decorator'
-import { GetMessagesSort, Message, SendMessageInput } from './message.types'
+import {
+  GetMessagesSort,
+  Message,
+  messageAddedSub,
+  SendMessageInput,
+} from './message.types'
 
 @Resolver(() => Message)
 export class MessageResolver {
@@ -45,6 +51,8 @@ export class MessageResolver {
     })
   }
 
+
+
   @Mutation(() => Message)
   async sendMessage(
     @Args('data') data: SendMessageInput,
@@ -56,8 +64,44 @@ export class MessageResolver {
         chatId: data.chatId,
         senderId: authData.id,
       },
+      select: {
+        chat: {
+          select: {
+            chatParticipants: {
+              select: {
+                userId: true,
+              },
+            },
+          },
+        },
+        createdAt: true,
+        id: true,
+        senderId: true,
+        message: true,
+        chatId: true,
+      },
     })
-    return message
+    const { chat, ...messageData } = message
+    this.sendPubSubMessages(message, chat.chatParticipants)
+    return messageData
+  }
+
+  private sendPubSubMessages<T extends { senderId: number; message: string }>(
+    message: T,
+    users: { userId: number }[]
+  ) {
+    for (const user of users) {
+      if (message.senderId === user.userId) continue
+      this.pubsub.publish(`user_${user.userId}`, {
+        [messageAddedSub]: message,
+      })
+    }
+  }
+
+  @Subscription(() => Message, { name: messageAddedSub })
+  subscribeToMessage(@AuthUser() authData: JwtAuthData) {
+    console.log('authData :>> ', authData)
+    return this.pubsub.asyncIterator(`user_${authData.id}`)
   }
 
   @ResolveField(() => User)

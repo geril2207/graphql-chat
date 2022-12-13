@@ -3,6 +3,10 @@ import { Chat } from 'src/chat/chat.types'
 import { SortEnum } from 'src/common/common.types'
 import { User } from 'src/user/types/user.type'
 
+
+
+export const messageAddedSub = 'messageAddedSub'
+
 @ObjectType()
 export class Message {
   @Field(() => Int)

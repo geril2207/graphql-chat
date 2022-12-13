@@ -15,15 +15,15 @@ export class MessageLoader {
           in: allChatIds,
         },
       },
-      skip: sort.skip,
-      take: sort.take,
       orderBy: {
         id: sort.orderBy,
       },
     })
 
     return allChatIds.map(chatId =>
-      allMessages.filter(message => message.chatId === chatId)
+      allMessages
+        .filter(message => message.chatId === chatId)
+        .slice(items[0].sort.skip, items[0].sort.skip + items[0].sort.take)
     )
   }
 }

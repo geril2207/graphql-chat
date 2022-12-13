@@ -69,10 +69,6 @@ enum SortEnum {
   desc
 }
 
-type Subscription {
-  messageAddedSub: Message!
-}
-
 type User {
   email: String!
   id: Int!

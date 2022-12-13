@@ -15,3 +15,4 @@ export const publicRoutes: Route[] = [{ id: 'LOGIN', path: '/login', element: Lo
 export const privateRoutes: Route[] = [
   { id: 'HOME', path: '/home', element: Home, layout: MainLayout },
 ]
+

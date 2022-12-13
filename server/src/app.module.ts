@@ -36,13 +36,18 @@ interface Context {
         path: '/',
         autoSchemaFile: join(process.cwd(), 'schema.gql'),
         sortSchema: true,
-        context: ({ req, res }): Context => {
+        context: ({ req, res, connectionParams }): Context => {
           const defaultCtx = {
             req,
             res,
             loaders: dataloaderService.getLoaders(),
           }
-          const authorization = req.headers.authorization
+
+          // console.log('req :>> ', req)
+          const authorization =
+            req?.headers?.authorization ??
+            connectionParams?.authorization ??
+            null
           if (!authorization) return defaultCtx
           try {
             const token = authorization.split(' ')[1]
@@ -62,7 +67,14 @@ interface Context {
           return graphQLFormattedError
         },
         subscriptions: {
-          'graphql-ws': true,
+          'graphql-ws': {
+            onConnect: context => {
+              const { connectionParams } = context
+              console.log('connectionParams :>> ', connectionParams)
+              const authorization = connectionParams.authorization
+              return { authorization }
+            },
+          },
         },
       }),
     }),
